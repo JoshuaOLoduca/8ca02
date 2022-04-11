@@ -80,7 +80,6 @@ const Home = ({ user, logout }) => {
 
   const addNewConvo = useCallback(
     (recipientId, message) => {
-      console.log('newconvo');
       setConversations((prevConvos) => {
         const newConvos = [...prevConvos];
 
@@ -99,7 +98,6 @@ const Home = ({ user, logout }) => {
 
   const addMessageToConversation = useCallback(
     (data) => {
-      console.log('addTOConvo', data);
       // if sender isn't null, that means the message needs to be put in a brand new convo
       const { message, sender = null } = data;
       if (sender !== null) {
@@ -110,21 +108,20 @@ const Home = ({ user, logout }) => {
         };
         newConvo.latestMessageText = message.text;
         setConversations((prev) => [newConvo, ...prev]);
-        return;
-      }
-
-      // If we get to here, we add convo to existing conversation
-      setConversations((prevConvos) => {
-        const newConvos = [...prevConvos];
-        for (const convo of newConvos) {
-          if (convo.id === message.conversationId) {
-            convo.messages.unshift(message);
-            convo.latestMessageText = message.text;
-            break;
+      } else {
+        // If we get to here, we add convo to existing conversation
+        setConversations((prevConvos) => {
+          const newConvos = [...prevConvos];
+          for (const convo of newConvos) {
+            if (convo.id === message.conversationId) {
+              convo.messages.unshift(message);
+              convo.latestMessageText = message.text;
+              break;
+            }
           }
-        }
-        return newConvos;
-      });
+          return newConvos;
+        });
+      }
     },
     [setConversations]
   );
