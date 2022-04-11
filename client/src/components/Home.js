@@ -80,16 +80,21 @@ const Home = ({ user, logout }) => {
 
   const addNewConvo = useCallback(
     (recipientId, message) => {
-      conversations.forEach((convo) => {
-        if (convo.otherUser.id === recipientId) {
-          convo.messages.push(message);
-          convo.latestMessageText = message.text;
-          convo.id = message.conversationId;
+      console.log('newconvo');
+      setConversations((prevConvos) => {
+        const newConvos = [...prevConvos];
+
+        for (const convo of newConvos) {
+          if (convo.otherUser.id === recipientId) {
+            convo.messages.push(message);
+            convo.latestMessageText = message.text;
+            convo.id = message.conversationId;
+            return newConvos;
+          }
         }
       });
-      setConversations(conversations);
     },
-    [setConversations, conversations]
+    [setConversations]
   );
 
   const addMessageToConversation = useCallback(
@@ -105,8 +110,10 @@ const Home = ({ user, logout }) => {
         };
         newConvo.latestMessageText = message.text;
         setConversations((prev) => [newConvo, ...prev]);
+        return;
       }
 
+      // If we get to here, we add convo to existing conversation
       setConversations((prevConvos) => {
         const newConvos = [...prevConvos];
         for (const convo of newConvos) {
@@ -119,7 +126,7 @@ const Home = ({ user, logout }) => {
         return newConvos;
       });
     },
-    [setConversations, conversations]
+    [setConversations]
   );
 
   const setActiveChat = (username) => {
