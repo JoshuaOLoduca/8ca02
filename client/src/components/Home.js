@@ -109,13 +109,13 @@ const Home = ({ user, logout }) => {
 
       setConversations((prevConvos) => {
         const newConvos = [...prevConvos];
-        newConvos.forEach((convo) => {
-          console.log(convo);
+        for (const convo of newConvos) {
           if (convo.id === message.conversationId) {
             convo.messages.unshift(message);
             convo.latestMessageText = message.text;
+            break;
           }
-        });
+        }
         return newConvos;
       });
     },
