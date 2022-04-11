@@ -54,7 +54,11 @@ const Home = ({ user, logout }) => {
     return data;
   };
 
-  const sendMessage = (data, body) => {
+  const sendMessage = async (data, body) => {
+    if (typeof data === 'object' && typeof data.then === 'function') {
+      data = await data;
+    }
+
     socket.emit('new-message', {
       message: data.message,
       recipientId: body.recipientId,
@@ -71,6 +75,7 @@ const Home = ({ user, logout }) => {
       } else {
         addMessageToConversation(data);
       }
+      console.log('postMessage', body);
 
       sendMessage(data, body);
     } catch (error) {
@@ -93,7 +98,10 @@ const Home = ({ user, logout }) => {
   );
 
   const addMessageToConversation = useCallback(
-    (data) => {
+    async (data) => {
+      if (typeof data === 'object' && typeof data.then === 'function') {
+        data = await data;
+      }
       // if sender isn't null, that means the message needs to be put in a brand new convo
       const { message, sender = null } = data;
       if (sender !== null) {
