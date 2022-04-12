@@ -43,8 +43,14 @@ const ActiveChat = ({
 
   useEffect(() => {
     if (!conversation) return;
+
+    const unreadMessages = conversation.messages.filter(
+      (message) => !message.read && message.senderId !== user.id
+    );
+    if (!unreadMessages.length) return;
+
     axios.patch('/api/messages/read', { conversationId: conversation.id });
-  }, [conversation]);
+  }, [conversation, user.id]);
 
   return (
     <Box className={classes.root}>
