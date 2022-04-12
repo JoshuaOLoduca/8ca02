@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box } from '@material-ui/core';
 import { Input, Header, Messages } from './index';
+import axios from 'axios';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -27,15 +28,23 @@ const ActiveChat = ({
 }) => {
   const classes = useStyles();
 
-  const conversation = conversations
-    ? conversations.find(
-        (conversation) => conversation.otherUser.username === activeConversation
-      )
-    : {};
+  const conversation = useMemo(() => {
+    return conversations
+      ? conversations.find(
+          (conversation) =>
+            conversation.otherUser.username === activeConversation
+        )
+      : {};
+  }, [conversations, activeConversation]);
 
   const isConversation = (obj) => {
     return obj !== {} && obj !== undefined;
   };
+
+  useEffect(() => {
+    if (!conversation) return;
+    axios.patch('/api/messages/read', { conversationId: conversation.id });
+  }, [conversation]);
 
   return (
     <Box className={classes.root}>

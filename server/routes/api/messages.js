@@ -59,14 +59,16 @@ router.patch("/read", async (req, res, next) => {
     if (!conversation) return res.sendStatus(404);
 
     for (const message of conversation.messages) {
-      if (message.dataValues.senderId === readerId && !message.dataValues.read)
+      if (message.dataValues.senderId === readerId || message.dataValues.read)
         continue;
+
       message.dataValues.read = true;
+      message.dataValues.updatedAt = new Date();
       messagesToUpdate.push(message.dataValues);
     }
 
     Message.bulkCreate(messagesToUpdate, {
-      updateOnDuplicate: ["read"],
+      updateOnDuplicate: ["read", "updatedAt"],
     });
 
     res.sendStatus(200);
