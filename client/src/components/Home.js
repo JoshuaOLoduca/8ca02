@@ -78,6 +78,20 @@ const Home = ({ user, logout }) => {
     }
   };
 
+  const readMessages = (conversationId) => {
+    setConversations((prev) => {
+      const newConvos = [...prev];
+      for (const convo of newConvos) {
+        if (convo.id !== conversationId) continue;
+        convo.messages.forEach((message) => {
+          if (message.senderId === user.id) return;
+          message.read = true;
+        });
+      }
+      return newConvos;
+    });
+  };
+
   const addNewConvo = useCallback(
     (recipientId, message) => {
       conversations.forEach((convo) => {
@@ -216,6 +230,7 @@ const Home = ({ user, logout }) => {
           conversations={conversations}
           user={user}
           postMessage={postMessage}
+          readMessages={readMessages}
         />
       </Grid>
     </>

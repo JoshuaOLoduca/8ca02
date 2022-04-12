@@ -25,6 +25,7 @@ const ActiveChat = ({
   conversations,
   activeConversation,
   postMessage,
+  readMessages,
 }) => {
   const classes = useStyles();
 
@@ -49,8 +50,10 @@ const ActiveChat = ({
     );
     if (!unreadMessages.length) return;
 
+    readMessages(conversation.id);
+
     axios.patch('/api/messages/read', { conversationId: conversation.id });
-  }, [conversation, user.id]);
+  }, [conversation, user.id, readMessages]);
 
   return (
     <Box className={classes.root}>
