@@ -24,11 +24,13 @@ Conversation.findConversation = async function (user1Id, user2Id) {
 
 // Get conversation given conversation id
 
-Conversation.getConversation = async function (conversationId) {
+Conversation.getConversationMessages = async function (conversationId) {
   const conversation = await Conversation.findOne({
     where: {
       id: conversationId,
     },
+    order: [[Message, "createdAt", "DESC"]],
+    include: [{ model: Message, order: ["createdAt", "DESC"] }],
   });
 
   // return conversation or null if it doesn't exist

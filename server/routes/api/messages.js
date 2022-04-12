@@ -49,8 +49,27 @@ router.patch("/read", async (req, res, next) => {
     if (!req.user) {
       return res.sendStatus(401);
     }
-    const senderId = req.user.id;
-    const { recipientId, text, conversationId, sender } = req.body;
+    const readerId = req.user.id;
+    const { conversationId } = req.body;
+    const messagesToUpdate = [];
+
+    const conversation = await Conversation.getConversationMessages(
+      conversationId
+    );
+    if (!conversation) return res.sendStatus(404);
+
+    for (const message of conversation.messages) {
+      if (message.dataValues.senderId === readerId && !message.dataValues.read)
+        continue;
+      message.dataValues.read = true;
+      messagesToUpdate.push(message.dataValues);
+    }
+
+    Message.bulkCreate(messagesToUpdate, {
+      updateOnDuplicate: ["read"],
+    });
+
+    res.sendStatus(200);
   } catch (error) {
     next(error);
   }
