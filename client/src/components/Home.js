@@ -89,8 +89,10 @@ const Home = ({ user, logout }) => {
   const readConvo = useCallback(
     (conversationId, sendersId) => {
       const userId = sendersId || user.id;
+
       setConversations((prev) => {
         const newConvos = [...prev];
+
         for (const convo of newConvos) {
           if (convo.id !== conversationId) continue;
 
@@ -100,6 +102,7 @@ const Home = ({ user, logout }) => {
           });
           break;
         }
+
         return newConvos;
       });
     },
