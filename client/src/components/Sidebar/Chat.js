@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    position: 'relative',
     borderRadius: 8,
     height: 80,
     boxShadow: '0 2px 10px 0 rgba(88,133,196,0.05)',
@@ -14,6 +15,20 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       cursor: 'grab',
     },
+  },
+  unreadMessages: {
+    position: 'absolute',
+    right: 0,
+    borderRadius: '500px',
+    backgroundColor: 'rgb(81, 145, 254)',
+    color: '#ffffff',
+    fontWeight: 'bold',
+    fontSize: '16px',
+    padding: '4px 8px',
+    minWidth: '30px',
+    textAlign: 'center',
+    margin: 'auto',
+    marginRight: 20,
   },
 }));
 
@@ -41,6 +56,9 @@ const Chat = ({ conversation, setActiveChat }) => {
         conversation={conversation}
         unreadMessages={unreadMessages}
       />
+      {!!unreadMessages && (
+        <Box className={classes.unreadMessages}>{unreadMessages}</Box>
+      )}
     </Box>
   );
 };

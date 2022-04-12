@@ -8,7 +8,6 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
     justifyContent: 'space-between',
     marginLeft: 20,
-    marginRight: 20,
     flexGrow: 1,
   },
   username: {
@@ -20,22 +19,9 @@ const useStyles = makeStyles((theme) => ({
     color: '#9CADC8',
     letterSpacing: -0.17,
   },
-  unreadMessages: {
-    position: 'absolute',
-    right: 0,
-    borderRadius: '500px',
-    backgroundColor: 'rgb(81, 145, 254)',
-    color: '#ffffff',
-    fontWeight: 'bold',
-    fontSize: '16px',
-    padding: '4px 8px',
-    minWidth: '30px',
-    textAlign: 'center',
-    margin: 'auto',
-  },
 }));
 
-const ChatContent = ({ conversation, unreadMessages }) => {
+const ChatContent = ({ conversation }) => {
   const classes = useStyles();
 
   const { otherUser } = conversation;
@@ -51,9 +37,6 @@ const ChatContent = ({ conversation, unreadMessages }) => {
           {latestMessageText}
         </Typography>
       </Box>
-      {!!unreadMessages && (
-        <Box className={classes.unreadMessages}>{unreadMessages}</Box>
-      )}
     </Box>
   );
 };
