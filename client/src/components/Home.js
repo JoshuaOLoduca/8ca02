@@ -87,8 +87,7 @@ const Home = ({ user, logout }) => {
   };
 
   const readConvo = useCallback(
-    (conversationId, sendersId, data) => {
-      console.log(conversationId, sendersId, data);
+    (conversationId, sendersId) => {
       const userId = sendersId || user.id;
       setConversations((prev) => {
         const newConvos = [...prev];
