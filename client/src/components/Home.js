@@ -79,20 +79,33 @@ const Home = ({ user, logout }) => {
   };
 
   const readMessages = (conversationId) => {
-    setConversations((prev) => {
-      const newConvos = [...prev];
-      for (const convo of newConvos) {
-        if (convo.id !== conversationId) continue;
-
-        convo.messages.forEach((message) => {
-          if (message.senderId === user.id) return;
-          message.read = true;
-        });
-        break;
-      }
-      return newConvos;
+    readConvo(conversationId);
+    socket.emit('read-message', {
+      conversationId,
+      readerId: user.id,
     });
   };
+
+  const readConvo = useCallback(
+    (conversationId, sendersId, data) => {
+      console.log(conversationId, sendersId, data);
+      const userId = sendersId || user.id;
+      setConversations((prev) => {
+        const newConvos = [...prev];
+        for (const convo of newConvos) {
+          if (convo.id !== conversationId) continue;
+
+          convo.messages.forEach((message) => {
+            if (message.senderId === userId) return;
+            message.read = true;
+          });
+          break;
+        }
+        return newConvos;
+      });
+    },
+    [user.id]
+  );
 
   const addNewConvo = useCallback(
     (recipientId, message) => {
@@ -172,6 +185,9 @@ const Home = ({ user, logout }) => {
     socket.on('add-online-user', addOnlineUser);
     socket.on('remove-offline-user', removeOfflineUser);
     socket.on('new-message', addMessageToConversation);
+    socket.on('read-message', (data) =>
+      readConvo(data.conversationId, data.readerId)
+    );
 
     return () => {
       // before the component is destroyed
@@ -179,8 +195,15 @@ const Home = ({ user, logout }) => {
       socket.off('add-online-user', addOnlineUser);
       socket.off('remove-offline-user', removeOfflineUser);
       socket.off('new-message', addMessageToConversation);
+      socket.off('read-message', readConvo);
     };
-  }, [addMessageToConversation, addOnlineUser, removeOfflineUser, socket]);
+  }, [
+    addMessageToConversation,
+    addOnlineUser,
+    removeOfflineUser,
+    readConvo,
+    socket,
+  ]);
 
   useEffect(() => {
     // when fetching, prevent redirect

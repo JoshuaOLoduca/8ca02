@@ -16,7 +16,6 @@ const Messages = (props) => {
       setLatestReadMessageId(message.id);
     }
   });
-  console.log(messages);
 
   return (
     <Box>
