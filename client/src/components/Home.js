@@ -83,10 +83,12 @@ const Home = ({ user, logout }) => {
       const newConvos = [...prev];
       for (const convo of newConvos) {
         if (convo.id !== conversationId) continue;
+
         convo.messages.forEach((message) => {
           if (message.senderId === user.id) return;
           message.read = true;
         });
+        break;
       }
       return newConvos;
     });
