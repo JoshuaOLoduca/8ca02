@@ -110,17 +110,18 @@ const Home = ({ user, logout }) => {
         setConversations((prev) => [newConvo, ...prev]);
       } else {
         // If we get to here, we add convo to existing conversation
-        setConversations((prevConvos) => {
-          const newConvos = [...prevConvos];
-          for (const convo of newConvos) {
+        setConversations((prev) =>
+          prev.map((convo) => {
             if (convo.id === message.conversationId) {
-              convo.messages.unshift(message);
-              convo.latestMessageText = message.text;
-              break;
+              const convoCopy = { ...convo };
+              convoCopy.messages.unshift(message);
+              convoCopy.latestMessageText = message.text;
+              return convoCopy;
+            } else {
+              return convo;
             }
-          }
-          return newConvos;
-        });
+          })
+        );
       }
     },
     [setConversations]
