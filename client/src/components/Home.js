@@ -85,15 +85,18 @@ const Home = ({ user, logout }) => {
       setConversations((prev) => {
         const newConvos = [...prev];
 
-        for (const convo of newConvos) {
+        for (let i in newConvos) {
+          const convo = { ...newConvos[i] };
           if (convo.id !== conversationId) continue;
 
           if (!sendersId) convo.unreadMessageCount = 0;
 
-          convo.messages.forEach((message) => {
+          convo.messages.forEach((message, msgIndex) => {
             if (message.senderId === userId) return;
-            message.read = true;
+            convo.messages[msgIndex] = { ...message, read: true };
           });
+
+          newConvos[i] = convo;
           break;
         }
 
