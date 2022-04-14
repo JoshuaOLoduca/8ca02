@@ -2,7 +2,6 @@ import React, { useEffect, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box } from '@material-ui/core';
 import { Input, Header, Messages } from './index';
-import axios from 'axios';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -50,13 +49,6 @@ const ActiveChat = ({
     if (!unreadMessages) return;
 
     readMessages(conversation.id);
-
-    const updateUnreadMessages = async () =>
-      await axios.patch('/api/messages/read', {
-        conversationId: conversation.id,
-      });
-
-    updateUnreadMessages();
   }, [conversation, user.id, readMessages]);
 
   return (

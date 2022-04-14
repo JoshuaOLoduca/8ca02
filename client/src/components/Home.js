@@ -78,14 +78,6 @@ const Home = ({ user, logout }) => {
     }
   };
 
-  const readMessages = (conversationId) => {
-    readConvo(conversationId);
-    socket.emit('read-message', {
-      conversationId,
-      readerId: user.id,
-    });
-  };
-
   const readConvo = useCallback(
     (conversationId, sendersId) => {
       const userId = sendersId || user.id;
@@ -109,6 +101,22 @@ const Home = ({ user, logout }) => {
       });
     },
     [user.id]
+  );
+
+  const readMessages = useCallback(
+    async (conversationId) => {
+      readConvo(conversationId);
+
+      await axios.patch('/api/messages/read', {
+        conversationId,
+      });
+
+      socket.emit('read-message', {
+        conversationId,
+        readerId: user.id,
+      });
+    },
+    [readConvo, socket, user.id]
   );
 
   const addNewConvo = useCallback(
@@ -144,21 +152,30 @@ const Home = ({ user, logout }) => {
         setConversations((prev) => [newConvo, ...prev]);
       } else {
         // If we get to here, we add convo to existing conversation
+        let messageIsForActiveConvo = false;
+
         setConversations((prev) =>
           prev.map((convo) => {
             if (convo.id === message.conversationId) {
               const convoCopy = { ...convo };
               convoCopy.messages = [...convoCopy.messages, message];
               convoCopy.latestMessageText = message.text;
+
+              if (convo.otherUser.username !== activeConversation) {
+                convoCopy.unreadMessageCount = convoCopy.unreadMessageCount + 1;
+              } else messageIsForActiveConvo = true;
+
               return convoCopy;
             } else {
               return convo;
             }
           })
         );
+
+        if (messageIsForActiveConvo) readMessages(message.conversationId);
       }
     },
-    [setConversations]
+    [activeConversation, readMessages]
   );
 
   const setActiveChat = (username) => {
