@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { Op } = require("sequelize");
 const { Conversation, Message } = require("../../db/models");
 const onlineUsers = require("../../onlineUsers");
 
@@ -49,30 +50,28 @@ router.patch("/read", async (req, res, next) => {
     const { conversationId } = req.body;
     const messagesToUpdate = [];
 
-    const conversation = await Conversation.getConversationMessages(
-      conversationId
-    );
+    const conversation = await Conversation.getConversation(conversationId);
     if (!conversation) return res.sendStatus(404);
 
     if (
       !req.user ||
-      (readerId !== conversation.user1Id && readerId !== conversation.user2Id)
+      (readerId !== conversation?.user1Id && readerId !== conversation?.user2Id)
     ) {
       return res.sendStatus(401);
     }
 
-    for (const message of conversation.messages) {
-      if (message.dataValues.senderId === readerId || message.dataValues.read)
-        continue;
-
-      message.dataValues.read = true;
-      message.dataValues.updatedAt = new Date();
-      messagesToUpdate.push(message.dataValues);
-    }
-
-    Message.bulkCreate(messagesToUpdate, {
-      updateOnDuplicate: ["read", "updatedAt"],
-    });
+    Message.update(
+      {
+        read: true,
+      },
+      {
+        where: {
+          senderId: { [Op.not]: readerId },
+          conversationId,
+          read: false,
+        },
+      }
+    );
 
     res.sendStatus(204);
   } catch (error) {
