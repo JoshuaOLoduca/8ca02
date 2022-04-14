@@ -96,6 +96,8 @@ const Home = ({ user, logout }) => {
         for (const convo of newConvos) {
           if (convo.id !== conversationId) continue;
 
+          if (!sendersId) convo.unreadMessageCount = 0;
+
           convo.messages.forEach((message) => {
             if (message.senderId === userId) return;
             message.read = true;
@@ -235,6 +237,7 @@ const Home = ({ user, logout }) => {
     const fetchConversations = async () => {
       try {
         const { data } = await axios.get('/api/conversations');
+        console.log(data);
         setConversations(data);
       } catch (error) {
         console.error(error);

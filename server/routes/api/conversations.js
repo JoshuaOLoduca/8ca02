@@ -68,7 +68,7 @@ router.get("/", async (req, res, next) => {
       }
 
       // count Unread Messages
-      convoJSON.unreadMessages = await Message.count({
+      convoJSON.unreadMessageCount = await Message.count({
         col: "read",
         where: {
           read: false,

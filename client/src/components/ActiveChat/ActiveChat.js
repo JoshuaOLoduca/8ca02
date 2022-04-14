@@ -45,14 +45,18 @@ const ActiveChat = ({
   useEffect(() => {
     if (!conversation) return;
 
-    const unreadMessages = conversation.messages.filter(
-      (message) => !message.read && message.senderId !== user.id
-    );
-    if (!unreadMessages.length) return;
+    const unreadMessages = conversation.unreadMessageCount;
+
+    if (!unreadMessages) return;
 
     readMessages(conversation.id);
 
-    axios.patch('/api/messages/read', { conversationId: conversation.id });
+    const updateUnreadMessages = async () =>
+      await axios.patch('/api/messages/read', {
+        conversationId: conversation.id,
+      });
+
+    updateUnreadMessages();
   }, [conversation, user.id, readMessages]);
 
   return (
