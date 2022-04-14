@@ -93,7 +93,10 @@ const Home = ({ user, logout }) => {
 
           convo.messages.forEach((message, msgIndex) => {
             if (message.senderId === userId) return;
+
             convo.messages[msgIndex] = { ...message, read: true };
+            if (sendersId)
+              convo.mostRecentReadMessage = { ...convo.messages[msgIndex] };
           });
 
           newConvos[i] = convo;
@@ -257,7 +260,6 @@ const Home = ({ user, logout }) => {
     const fetchConversations = async () => {
       try {
         const { data } = await axios.get('/api/conversations');
-        console.log(data);
         setConversations(data);
       } catch (error) {
         console.error(error);

@@ -68,6 +68,16 @@ router.get("/", async (req, res, next) => {
       }
 
       // count Unread Messages
+      convoJSON.mostRecentReadMessage = await Message.findOne({
+        where: {
+          read: true,
+          senderId: userId,
+          conversationId: convoJSON.id,
+        },
+        order: [["createdAt", "DESC"]],
+      });
+
+      // get latest read message
       convoJSON.unreadMessageCount = await Message.count({
         col: "read",
         where: {
