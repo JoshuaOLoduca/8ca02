@@ -45,9 +45,6 @@ router.post("/", async (req, res, next) => {
 
 router.patch("/read", async (req, res, next) => {
   try {
-    if (!req.user) {
-      return res.sendStatus(401);
-    }
     const readerId = req.user.id;
     const { conversationId } = req.body;
     const messagesToUpdate = [];
@@ -56,6 +53,13 @@ router.patch("/read", async (req, res, next) => {
       conversationId
     );
     if (!conversation) return res.sendStatus(404);
+
+    if (
+      !req.user ||
+      (readerId !== conversation.user1Id && readerId !== conversation.user2Id)
+    ) {
+      return res.sendStatus(401);
+    }
 
     for (const message of conversation.messages) {
       if (message.dataValues.senderId === readerId || message.dataValues.read)
