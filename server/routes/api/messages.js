@@ -70,7 +70,7 @@ router.patch("/read", async (req, res, next) => {
       updateOnDuplicate: ["read", "updatedAt"],
     });
 
-    res.sendStatus(200);
+    res.sendStatus(204);
   } catch (error) {
     next(error);
   }
