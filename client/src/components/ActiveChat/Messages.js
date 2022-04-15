@@ -15,7 +15,7 @@ const Messages = (props) => {
             key={message.id}
             text={message.text}
             time={time}
-            isLatestRead={mostRecentReadMessage.id === message.id}
+            isLatestRead={mostRecentReadMessage?.id === message.id}
             otherUser={otherUser}
           />
         ) : (
