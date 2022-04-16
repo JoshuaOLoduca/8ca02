@@ -194,7 +194,7 @@ const Home = ({ user, logout }) => {
     const fetchConversations = async () => {
       try {
         const { data } = await axios.get('/api/conversations');
-        console.log(data);
+
         const convoData = data.map((conversation) => {
           conversation.isGroupChat = conversation.userCount > 2;
 

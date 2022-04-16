@@ -21,8 +21,6 @@ router.get("/", async (req, res, next) => {
       (convo) => convo.dataValues.conversationId
     );
 
-    // return console.log(getConvoIds[0], conversationIds);
-
     const conversations = await Conversation.findAll({
       where: {
         id: {
