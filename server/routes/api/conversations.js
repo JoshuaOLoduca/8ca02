@@ -12,7 +12,7 @@ router.get("/", async (req, res, next) => {
     }
     const userId = req.user.id;
     const getConvoIds = await Participant.findAll({
-      WHERE: { userId },
+      where: userId,
       attributes: ["conversationId"],
       group: ["conversationId"],
     });
