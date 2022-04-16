@@ -50,7 +50,7 @@ const ActiveChat = ({
               <>
                 <Messages
                   messages={conversation.messages}
-                  otherUser={conversation.otherUser}
+                  otherUsers={conversation.otherUsers}
                   userId={user.id}
                 />
                 <Input
