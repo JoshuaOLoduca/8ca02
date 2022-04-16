@@ -1,8 +1,8 @@
 CREATE TABLE participants (
   "conversationId" INT REFERENCES conversations(id),
   "userId" INT REFERENCES users(id),
-  "createdAt" timestamptz DEFAULT NOW(),
-  "updatedAt" timestamptz DEFAULT NOW(),
+  "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY ("conversationId", "userId")
 );
 
