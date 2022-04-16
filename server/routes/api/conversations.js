@@ -11,8 +11,24 @@ router.get("/", async (req, res, next) => {
       return res.sendStatus(401);
     }
     const userId = req.user.id;
+    const getConvoIds = await Participant.findAll({
+      WHERE: { userId },
+      attributes: ["conversationId"],
+      group: ["conversationId"],
+    });
+
+    const conversationIds = getConvoIds.map(
+      (convo) => convo.dataValues.conversationId
+    );
+
+    // return console.log(getConvoIds[0], conversationIds);
+
     const conversations = await Conversation.findAll({
-      where: userId,
+      where: {
+        id: {
+          [Op.or]: conversationIds,
+        },
+      },
       attributes: ["id"],
       order: [[Message, "createdAt", "ASC"]],
       include: [
@@ -24,6 +40,8 @@ router.get("/", async (req, res, next) => {
         },
       ],
     });
+
+    console.log(conversations);
 
     for (let i = 0; i < conversations.length; i++) {
       const convo = conversations[i];
