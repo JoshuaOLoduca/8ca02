@@ -184,7 +184,17 @@ const Home = ({ user, logout }) => {
       try {
         const { data } = await axios.get('/api/conversations');
         console.log(data);
-        setConversations(data);
+        const convoData = data.map((conversation) => {
+          conversation.isGroupChat = conversation.userCount > 2;
+
+          if (conversation.userCount > 2) return conversation;
+
+          const [otherUserKey] = Object.keys(conversation.otherUsers);
+          conversation.otherUser = conversation.otherUsers[otherUserKey];
+          return conversation;
+        });
+
+        setConversations(convoData);
       } catch (error) {
         console.error(error);
       }
