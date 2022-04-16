@@ -1,8 +1,10 @@
 CREATE TABLE participants (
   "conversationId" INT REFERENCES conversations(id),
   "userId" INT REFERENCES users(id),
+  "createdAt" timestamptz DEFAULT NOW(),
+  "updatedAt" timestamptz DEFAULT NOW(),
   PRIMARY KEY ("conversationId", "userId")
-) ;
+);
 
 -- For user1Id
 INSERT INTO participants ("conversationId","userId")
