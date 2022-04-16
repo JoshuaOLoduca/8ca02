@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS participants;
 CREATE TABLE participants (
   "conversationId" INT REFERENCES conversations(id),
   "userId" INT REFERENCES users(id),
