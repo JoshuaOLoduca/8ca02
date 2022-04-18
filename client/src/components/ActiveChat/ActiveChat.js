@@ -53,6 +53,7 @@ const ActiveChat = ({
     }
   }, [conversation, user.id, readMessages]);
 
+  console.log(conversation);
   return (
     <Box className={classes.root}>
       {isConversation(conversation) && conversation.otherUser && (
@@ -66,7 +67,7 @@ const ActiveChat = ({
               <>
                 <Messages
                   messages={conversation.messages}
-                  mostRecentReadMessage={conversation.mostRecentReadMessage}
+                  mostRecentReadMessageId={conversation.mostRecentReadMessageId}
                   otherUser={conversation.otherUser}
                   userId={user.id}
                 />

@@ -95,8 +95,7 @@ const Home = ({ user, logout }) => {
             if (message.senderId === userId) return;
 
             convo.messages[msgIndex] = { ...message, read: true };
-            if (sendersId)
-              convo.mostRecentReadMessage = { ...convo.messages[msgIndex] };
+            if (sendersId) convo.mostRecentReadMessageId = message.id;
           });
 
           newConvos[i] = convo;
