@@ -48,7 +48,6 @@ router.patch("/read", async (req, res, next) => {
   try {
     const readerId = req.user.id;
     const { conversationId } = req.body;
-    const messagesToUpdate = [];
 
     const conversation = await Conversation.getConversation(conversationId);
     if (!conversation) return res.sendStatus(404);
