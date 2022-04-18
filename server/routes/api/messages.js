@@ -57,7 +57,7 @@ router.patch("/read", async (req, res, next) => {
       !req.user ||
       (readerId !== conversation?.user1Id && readerId !== conversation?.user2Id)
     ) {
-      return res.sendStatus(401);
+      return res.sendStatus(403);
     }
 
     Message.update(
