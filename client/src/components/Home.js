@@ -79,9 +79,7 @@ const Home = ({ user, logout }) => {
   };
 
   const readConvo = useCallback(
-    (conversationId, sendersId) => {
-      const userId = sendersId || user.id;
-
+    (conversationId, sendersId = user.id) => {
       setConversations((prev) => {
         const newConvos = [...prev];
 
@@ -92,7 +90,7 @@ const Home = ({ user, logout }) => {
           if (!sendersId) convo.unreadMessageCount = 0;
 
           convo.messages.forEach((message, msgIndex) => {
-            if (message.senderId === userId) return;
+            if (message.senderId === sendersId) return;
 
             convo.messages[msgIndex] = { ...message, read: true };
             if (sendersId) convo.mostRecentReadMessageId = message.id;
