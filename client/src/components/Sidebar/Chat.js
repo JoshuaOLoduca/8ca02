@@ -1,7 +1,8 @@
 import React from 'react';
-import { Box } from '@material-ui/core';
+import { Avatar, Box } from '@material-ui/core';
 import { BadgeAvatar, ChatContent } from '../Sidebar';
 import { makeStyles } from '@material-ui/core/styles';
+import { AvatarGroup } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -19,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Chat = ({ conversation, setActiveChat }) => {
   const classes = useStyles();
-  const { otherUser } = conversation;
+  const { otherUser, otherUsers } = conversation;
 
   const handleClick = async (conversation) => {
     await setActiveChat(conversation.otherUser.username);
@@ -27,12 +28,23 @@ const Chat = ({ conversation, setActiveChat }) => {
 
   return (
     <Box onClick={() => handleClick(conversation)} className={classes.root}>
-      <BadgeAvatar
-        photoUrl={otherUser.photoUrl}
-        username={otherUser.username}
-        online={otherUser.online}
-        sidebar={true}
-      />
+      {conversation.isGroupChat ? (
+        <AvatarGroup max={3}>
+          {Object.keys(otherUsers).map((user) => (
+            <Avatar
+              alt={otherUsers[user].username}
+              src={otherUsers[user].photoUrl}
+            />
+          ))}
+        </AvatarGroup>
+      ) : (
+        <BadgeAvatar
+          photoUrl={otherUser.photoUrl}
+          username={otherUser.username}
+          online={otherUser.online}
+          sidebar={true}
+        />
+      )}
       <ChatContent conversation={conversation} />
     </Box>
   );

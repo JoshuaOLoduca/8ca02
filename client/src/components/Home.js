@@ -100,11 +100,10 @@ const Home = ({ user, logout }) => {
   const addMessageToConversation = useCallback(
     (data) => {
       // if sender isn't null, that means the message needs to be put in a brand new convo
-      const { message, sender = null } = data;
+      const { message, sender = null, conversation } = data;
       if (sender !== null) {
         const newConvo = {
-          id: message.conversationId,
-          otherUser: sender,
+          ...conversation,
           messages: [message],
         };
         newConvo.latestMessageText = message.text;
@@ -194,7 +193,18 @@ const Home = ({ user, logout }) => {
     const fetchConversations = async () => {
       try {
         const { data } = await axios.get('/api/conversations');
-        setConversations(data);
+
+        const convoData = data.map((conversation) => {
+          conversation.isGroupChat = conversation.userCount > 2;
+
+          if (conversation.userCount > 2) return conversation;
+
+          const [otherUserKey] = Object.keys(conversation.otherUsers);
+          conversation.otherUser = conversation.otherUsers[otherUserKey];
+          return conversation;
+        });
+
+        setConversations(convoData);
       } catch (error) {
         console.error(error);
       }

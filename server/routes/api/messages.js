@@ -1,6 +1,7 @@
 const router = require("express").Router();
-const { Conversation, Message } = require("../../db/models");
+const { Conversation, Message, Participant, User } = require("../../db/models");
 const onlineUsers = require("../../onlineUsers");
+const { formatConversation } = require("./helper");
 
 // expects {recipientId, text, conversationId } in body (conversationId will be null if no conversation exists yet)
 router.post("/", async (req, res, next) => {
@@ -10,6 +11,7 @@ router.post("/", async (req, res, next) => {
     }
     const senderId = req.user.id;
     const { recipientId, text, conversationId, sender } = req.body;
+    const users = [senderId, recipientId];
 
     // if we already know conversation id, we can save time and just add it to message and return
     if (conversationId) {
@@ -24,20 +26,33 @@ router.post("/", async (req, res, next) => {
 
     if (!conversation) {
       // create conversation
-      conversation = await Conversation.create({
-        user1Id: senderId,
-        user2Id: recipientId,
+      conversation = await Conversation.create();
+      const participants = users.map((userId) => {
+        return { userId, conversationId: conversation.id };
       });
+
+      Participant.bulkCreate(participants);
       if (onlineUsers.includes(sender.id)) {
         sender.online = true;
       }
+
+      conversation.isNewRecord = true;
     }
     const message = await Message.create({
       senderId,
       text,
       conversationId: conversation.id,
     });
-    res.json({ message, sender });
+
+    let convo;
+    if (conversation.isNewRecord) {
+      convo = formatConversation(
+        await Conversation.getConvosationWithAssociates(conversation.id),
+        req.user.id
+      );
+    }
+
+    res.json({ message, sender, conversation: convo });
   } catch (error) {
     next(error);
   }
