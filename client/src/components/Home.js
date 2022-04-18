@@ -177,6 +177,8 @@ const Home = ({ user, logout }) => {
           })
         );
 
+        // If messages recieved is for active chat,
+        //  Update state, Database and other chatter (Sockets) about message being read
         if (messageIsForActiveConvo) readMessages(message.conversationId);
       }
     },
