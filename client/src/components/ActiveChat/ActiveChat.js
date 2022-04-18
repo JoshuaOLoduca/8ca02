@@ -43,12 +43,14 @@ const ActiveChat = ({
 
   useEffect(() => {
     if (!conversation) return;
-
     const unreadMessages = conversation.unreadMessageCount;
 
     if (!unreadMessages) return;
+    readConvoMessages(conversation.id);
 
-    readMessages(conversation.id);
+    async function readConvoMessages(convoId) {
+      await readMessages(convoId);
+    }
   }, [conversation, user.id, readMessages]);
 
   return (
