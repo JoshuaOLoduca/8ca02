@@ -1,30 +1,36 @@
-import React from "react";
-import { Box, Typography } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import React from 'react';
+import { Box, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: "flex",
-    justifyContent: "space-between",
+    display: 'flex',
+    position: 'relative',
+    justifyContent: 'space-between',
     marginLeft: 20,
     flexGrow: 1,
   },
   username: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     letterSpacing: -0.2,
   },
   previewText: {
     fontSize: 12,
-    color: "#9CADC8",
+    color: '#9CADC8',
     letterSpacing: -0.17,
   },
+  unreadMessage: { fontWeight: 'bolder', color: 'black' },
 }));
 
-const ChatContent = ({ conversation }) => {
+const ChatContent = ({ conversation, unreadMessages }) => {
   const classes = useStyles();
 
   const { otherUser } = conversation;
   const latestMessageText = conversation.id && conversation.latestMessageText;
+
+  const messagePreviewClasses = `${classes.previewText} ${
+    unreadMessages > 0 && classes.unreadMessage
+  }`;
 
   return (
     <Box className={classes.root}>
@@ -32,7 +38,7 @@ const ChatContent = ({ conversation }) => {
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
-        <Typography className={classes.previewText}>
+        <Typography className={messagePreviewClasses}>
           {latestMessageText}
         </Typography>
       </Box>
