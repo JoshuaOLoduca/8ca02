@@ -87,7 +87,7 @@ const Home = ({ user, logout }) => {
           const convo = { ...newConvos[i] };
           if (convo.id !== conversationId) continue;
 
-          if (!sendersId) convo.unreadMessageCount = 0;
+          if (sendersId === user.id) convo.unreadMessageCount = 0;
 
           convo.messages.forEach((message, msgIndex) => {
             if (message.senderId === sendersId) return;
@@ -106,20 +106,26 @@ const Home = ({ user, logout }) => {
     [user.id]
   );
 
-  const readMessages = useCallback(
+  const sendReadMessageRequests = useCallback(
     async (conversationId) => {
-      readConvo(conversationId);
-
       await axios.patch('/api/messages/read', {
         conversationId,
       });
 
-      socket.emit('read-message', {
+      await socket.emit('read-message', {
         conversationId,
         readerId: user.id,
       });
     },
-    [readConvo, socket, user.id]
+    [socket, user.id]
+  );
+
+  const readMessages = useCallback(
+    (conversationId) => {
+      readConvo(conversationId);
+      sendReadMessageRequests(conversationId);
+    },
+    [readConvo, sendReadMessageRequests]
   );
 
   const addNewConvo = useCallback(
@@ -155,18 +161,22 @@ const Home = ({ user, logout }) => {
         setConversations((prev) => [newConvo, ...prev]);
       } else {
         // If we get to here, we add convo to existing conversation
-        let messageIsForActiveConvo = false;
 
         setConversations((prev) =>
           prev.map((convo) => {
             if (convo.id === message.conversationId) {
               const convoCopy = { ...convo };
-              convoCopy.messages = [...convoCopy.messages, message];
-              convoCopy.latestMessageText = message.text;
 
               if (convo.otherUser.username !== activeConversation) {
                 convoCopy.unreadMessageCount = convoCopy.unreadMessageCount + 1;
-              } else messageIsForActiveConvo = true;
+              } else {
+                message.read = true;
+                convoCopy.unreadMessageCount = 0;
+                sendReadMessageRequests(convoCopy.id);
+              }
+
+              convoCopy.messages = [...convoCopy.messages, message];
+              convoCopy.latestMessageText = message.text;
 
               return convoCopy;
             } else {
@@ -174,13 +184,9 @@ const Home = ({ user, logout }) => {
             }
           })
         );
-
-        // If messages recieved is for active chat,
-        //  Update state, Database and other chatter (Sockets) about message being read
-        if (messageIsForActiveConvo) readMessages(message.conversationId);
       }
     },
-    [activeConversation, readMessages]
+    [activeConversation, sendReadMessageRequests]
   );
 
   const setActiveChat = (username) => {

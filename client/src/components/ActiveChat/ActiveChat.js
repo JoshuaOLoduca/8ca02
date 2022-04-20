@@ -53,7 +53,6 @@ const ActiveChat = ({
     }
   }, [conversation, user.id, readMessages]);
 
-  console.log(conversation);
   return (
     <Box className={classes.root}>
       {isConversation(conversation) && conversation.otherUser && (
